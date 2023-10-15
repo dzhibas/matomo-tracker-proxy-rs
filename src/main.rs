@@ -1,10 +1,13 @@
+use crate::config::Config;
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::Router;
 use controllers::health;
 use dotenv::dotenv;
+use tower_http::services::ServeDir;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+mod config;
 mod controllers;
 
 #[tokio::main]
@@ -20,9 +23,13 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    let config = Config::new();
+
     let app = Router::new()
         .route("/", get(root))
-        .nest("/status", health::route());
+        .with_state(config)
+        .nest("/status", health::route())
+        .nest_service("/public", ServeDir::new("public"));
 
     let addr = "0.0.0.0:3000";
 
