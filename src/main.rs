@@ -23,7 +23,7 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let config = Config::new();
+    let config = Config::load_from_env();
 
     let app = Router::new()
         .route("/", get(root))
