@@ -1,14 +1,18 @@
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::Router;
+use controllers::health;
 use dotenv::dotenv;
-use std::env;
+
+mod controllers;
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
 
-    let app = Router::new().route("/", get(root));
+    let app = Router::new()
+        .route("/", get(root))
+        .nest("/status", health::route());
 
     let addr = "0.0.0.0:3000";
 
