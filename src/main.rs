@@ -1,5 +1,5 @@
 use crate::config::Config;
-use axum::response::IntoResponse;
+use axum::{response::IntoResponse, extract::State};
 use axum::routing::get;
 use axum::Router;
 use controllers::health;
@@ -41,6 +41,6 @@ async fn main() {
         .unwrap();
 }
 
-async fn root() -> impl IntoResponse {
-    "Root"
+async fn root(State(config): State<Config>) -> impl IntoResponse {
+    format!("Matomo url from config: {}", config.matomo_url.unwrap_or("Not set".to_string()))
 }
