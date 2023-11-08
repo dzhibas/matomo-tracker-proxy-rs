@@ -1,11 +1,11 @@
 use crate::config::Config;
-use axum::{response::IntoResponse, extract::State};
 use axum::routing::get;
 use axum::Router;
+use axum::{extract::State, response::IntoResponse};
 use controllers::health;
 use dotenv::dotenv;
 use tower_http::services::ServeDir;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 mod config;
 mod controllers;
@@ -15,11 +15,9 @@ async fn main() {
     dotenv().ok();
 
     tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| {
-                "matomo_tracker_proxy_rs=debug,tower_http=debug,axum::rejection=trace".into()
-            }),
-        )
+        .with(EnvFilter::new(std::env::var("RUST_LOG").unwrap_or_else(
+            |_| "matomo_tracker_proxy_rs=debug,tower_http=debug,axum::rejection=trace".into(),
+        )))
         .with(tracing_subscriber::fmt::layer())
         .init();
 
@@ -42,5 +40,8 @@ async fn main() {
 }
 
 async fn root(State(config): State<Config>) -> impl IntoResponse {
-    format!("Matomo url from config: {}", config.matomo_url.unwrap_or("Not set".to_string()))
+    format!(
+        "Matomo url from config: {}",
+        config.matomo_url.unwrap_or("Not set".to_string())
+    )
 }
