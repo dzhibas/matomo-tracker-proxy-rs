@@ -25,7 +25,7 @@ impl Config {
         Config::default()
     }
 
-    pub fn load_from_env() -> Self {
+    pub fn from_env() -> Self {
         let mut config = Config::new();
 
         config.matomo_url = env::var("MATOMO_URL").ok();

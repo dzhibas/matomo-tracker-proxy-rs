@@ -4,7 +4,7 @@ version = "0.2.4"
 edition = "2021"
 
 [dependencies]
-axum = "0.6.20"
+axum = { version = "0.6.20", features = ["macros"] }
 dotenv = "0.15.0"
 serde = { version = "1.0.189", features = ["derive"] }
 serde_json = "1.0.107"
@@ -13,3 +13,11 @@ tower = { version = "0.4.13", features = ["util"] }
 tower-http = { version = "0.4.4", features = ["fs", "trace"] }
 tracing = "0.1.39"
 tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+rpath = true
+incremental = false
+overflow-checks = false
+strip = "symbols"

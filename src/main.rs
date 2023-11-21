@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use crate::config::Config;
 use axum::routing::get;
 use axum::Router;
@@ -11,9 +12,20 @@ mod config;
 mod controllers;
 mod queue;
 
+#[derive(Clone)]
+struct AppState {
+    config: Config,
+}
+
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+
+    let config = Config::from_env();
+    let state = AppState {
+        config,
+    };
+    let shared_app_state = Arc::new(state);
 
     tracing_subscriber::registry()
         .with(EnvFilter::new(std::env::var("RUST_LOG").unwrap_or_else(
@@ -22,11 +34,9 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let config = Config::load_from_env();
-
     let app = Router::new()
         .route("/", get(root))
-        .with_state(config)
+        .with_state(shared_app_state.clone())
         .nest("/status", health::route())
         .nest_service("/public", ServeDir::new("public"));
 
@@ -40,9 +50,9 @@ async fn main() {
         .unwrap();
 }
 
-async fn root(State(config): State<Config>) -> impl IntoResponse {
+async fn root(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     format!(
         "Matomo url from config: {}",
-        config.matomo_url.unwrap_or("Not set".to_string())
+        state.config.matomo_url.clone().unwrap_or("Not set".to_string())
     )
 }
