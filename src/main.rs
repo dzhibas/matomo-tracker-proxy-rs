@@ -9,6 +9,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilte
 
 mod config;
 mod controllers;
+mod queue;
 
 #[tokio::main]
 async fn main() {
