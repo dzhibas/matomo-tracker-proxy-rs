@@ -1,7 +1,12 @@
 use std::collections::HashMap;
 
+/// Ref in https://github.com/matomo-org/plugin-QueuedTracking/blob/5.x-dev/Queue/Lock.php#L13
 pub const QUEUE_LOCK_NAME: &str = "QueuedTrackingLock";
+
+/// Ref in https://github.com/matomo-org/plugin-QueuedTracking/blob/5.x-dev/Queue.php#L17
 pub const QUEUE_PREFIX: &str = "trackingQueueV1";
+
+/// Ref in https://github.com/matomo-org/plugin-QueuedTracking/blob/5.x-dev/Queue/Manager.php#L49-L66
 pub const QUEUE_KEY_MAP: &[(&str, u8); 16] = &[
     ("0", 0),
     ("1", 1),
