@@ -32,8 +32,10 @@ pub fn get_queue_key(uniq_param: impl ToString) -> u8 {
     *map.get(first.as_str()).or(Some(&0)).unwrap_or(&0)
 }
 
+#[cfg(test)]
 mod tests {
-    use crate::queue::get_queue_key;
+    use super::*;
+
     #[test]
     fn test_get_queue_id() {
         assert_eq!(10, get_queue_key("ajdshflkajhdsflkja"));
