@@ -26,9 +26,11 @@ pub const QUEUE_KEY_MAP: &[(&str, u8); 16] = &[
     ("f", 15),
 ];
 
-pub fn get_queue_key(uniq_param: impl ToString) -> u8 {
-    let first = uniq_param.to_string().as_str()[..1].to_lowercase();
-    let map = HashMap::from(*QUEUE_KEY_MAP);
+/// given some incoming id as str or String, it would give back
+/// assgined queue id from hashmap
+pub fn get_queue_key(id: impl ToString) -> u8 {
+    let first = id.to_string().as_str()[..1].to_lowercase();
+    let map: HashMap<_, _> = (*QUEUE_KEY_MAP).into();
     *map.get(first.as_str()).or(Some(&0)).unwrap_or(&0)
 }
 
