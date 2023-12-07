@@ -1,10 +1,10 @@
-use std::sync::Arc;
 use crate::config::Config;
 use axum::routing::get;
 use axum::Router;
 use axum::{extract::State, response::IntoResponse};
 use controllers::health;
 use dotenv::dotenv;
+use std::sync::Arc;
 use tower_http::services::ServeDir;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
@@ -22,9 +22,7 @@ async fn main() {
     dotenv().ok();
 
     let config = Config::from_env();
-    let state = AppState {
-        config,
-    };
+    let state = AppState { config };
     let shared_app_state = Arc::new(state);
 
     tracing_subscriber::registry()
@@ -53,6 +51,10 @@ async fn main() {
 async fn root(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     format!(
         "Matomo url from config: {}",
-        state.config.matomo_url.clone().unwrap_or("Not set".to_string())
+        state
+            .config
+            .matomo_url
+            .clone()
+            .unwrap_or("Not set".to_string())
     )
 }
